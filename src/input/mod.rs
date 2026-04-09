@@ -2,7 +2,7 @@ pub mod main_handler;
 pub mod modal_handler;
 
 use crate::app::App;
-use crossterm::event::KeyEvent;
+use crossterm::event::{KeyEvent, MouseEvent};
 use main_handler::handle_main_input;
 use modal_handler::handle_modal_input;
 
@@ -12,4 +12,16 @@ pub fn handle_key_event(app: &mut App, key: KeyEvent) -> bool {
     } else {
         handle_main_input(app, key)
     }
+}
+
+pub fn handle_mouse_event(app: &mut App, mouse: MouseEvent) -> bool {
+    if let crossterm::event::MouseEventKind::Down(crossterm::event::MouseButton::Left) = mouse.kind {
+        // Very basic heuristic: if clicking in top top few rows, focus search, otherwise list
+        if mouse.row < 4 {
+            app.focus = crate::app::AppFocus::Search;
+        } else {
+            app.focus = crate::app::AppFocus::List;
+        }
+    }
+    false
 }

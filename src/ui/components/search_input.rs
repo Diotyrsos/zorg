@@ -8,10 +8,16 @@ use crate::app::App;
 use crate::ui::utils::default_block_builder;
 
 pub fn render_search_input(f: &mut Frame, app: &App, area: Rect, dimmed: bool, style: Style) {
-    let block = default_block_builder("Search Input", dimmed).style(style);
+    let focus_style = if app.focus == crate::app::AppFocus::Search {
+        Style::default().fg(ratatui::style::Color::Yellow)
+    } else {
+        style
+    };
+
+    let block = default_block_builder("Search Input", dimmed).border_style(focus_style);
     
     // Simulate cursor block
-    let display_input = if !dimmed {
+    let display_input = if !dimmed && app.focus == crate::app::AppFocus::Search {
         format!("{}█", app.input)
     } else {
         app.input.clone()

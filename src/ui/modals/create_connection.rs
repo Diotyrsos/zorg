@@ -15,6 +15,7 @@ pub struct CreateConnectionModal {
     pub identity_file: String,
     pub note: String,
     pub active_field: usize,
+    pub editing_connection_id: Option<i32>,
 }
 
 impl Default for CreateConnectionModal {
@@ -22,25 +23,39 @@ impl Default for CreateConnectionModal {
         Self {
             is_open: false,
             name: String::new(),
-            username: String::new(),
+            username: std::env::var("USER").unwrap_or_default(),
             hostname: String::new(),
             port: String::new(),
             identity_file: String::new(),
             note: String::new(),
             active_field: 0,
+            editing_connection_id: None,
         }
     }
 }
 
 impl CreateConnectionModal {
+    pub fn load_connection(&mut self, conn: &crate::db::connection::Connection) {
+        self.editing_connection_id = conn.id;
+        self.name = conn.name.clone();
+        self.username = conn.username.clone();
+        self.hostname = conn.hostname.clone();
+        self.port = conn.port.map(|p| p.to_string()).unwrap_or_default();
+        self.identity_file = conn.identity_file.clone().unwrap_or_default();
+        self.note = conn.note.clone().unwrap_or_default();
+        self.active_field = 0;
+        self.is_open = true;
+    }
+
     pub fn reset(&mut self) {
         self.name.clear();
-        self.username.clear();
+        self.username = std::env::var("USER").unwrap_or_default();
         self.hostname.clear();
         self.port.clear();
         self.identity_file.clear();
         self.note.clear();
         self.active_field = 0;
+        self.editing_connection_id = None;
     }
 
     pub fn is_valid(&self) -> bool {
@@ -55,7 +70,12 @@ impl CreateConnectionModal {
         let popup_area = center_rect(60, 60, area);
         f.render_widget(Clear, popup_area);
 
-        let block = default_block_builder("Create Connection", false);
+        let title = if self.editing_connection_id.is_some() {
+            "Edit Connection"
+        } else {
+            "Create Connection"
+        };
+        let block = default_block_builder(title, false);
         f.render_widget(block.clone(), popup_area);
 
         let inner_area = block.inner(popup_area);

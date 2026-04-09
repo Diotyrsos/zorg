@@ -26,6 +26,7 @@ diesel::table! {
         note -> Nullable<Text>,
         created_at -> Integer,
         modified_at -> Nullable<Integer>,
+        is_favorite -> Bool,
     }
 }
 

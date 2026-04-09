@@ -2,6 +2,7 @@ mod app;
 mod db;
 mod ui;
 mod input;
+mod ssh;
 
 use app::App;
 use ratatui::{Terminal, backend::CrosstermBackend};
@@ -12,7 +13,11 @@ use crossterm::event::{self, Event};
 fn main() -> Result<(), io::Error> {
     crossterm::terminal::enable_raw_mode()?;
     let mut stdout = io::stdout();
-    crossterm::execute!(stdout, crossterm::terminal::EnterAlternateScreen)?;
+    crossterm::execute!(
+        stdout,
+        crossterm::terminal::EnterAlternateScreen,
+        crossterm::event::EnableMouseCapture
+    )?;
 
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
@@ -25,10 +30,28 @@ fn main() -> Result<(), io::Error> {
             ui::draw(f, &app);
         })?;
 
-        if let Event::Key(key) = event::read()? {
-            if input::handle_key_event(&mut app, key) {
-                break;
+        let app_event = event::read()?;
+        match app_event {
+            Event::Key(key) => {
+                if input::handle_key_event(&mut app, key) {
+                    break;
+                }
             }
+            Event::Mouse(mouse_event) => {
+                if input::handle_mouse_event(&mut app, mouse_event) {
+                    break;
+                }
+            }
+            _ => {}
+        }
+        
+        // Check if there is a pending SSH connection to run outside the TUI loop
+        if let Some(conn) = app.pending_ssh_connection.take() {
+            let mut db_conn = app.db_conn();
+            if let Err(e) = ssh::runner::execute_ssh_connection(&conn, &mut db_conn, &mut terminal) {
+                app.messages.push(format!("SSH Error: {}", e));
+            }
+            app.refresh_history();
         }
     }
 
@@ -36,6 +59,7 @@ fn main() -> Result<(), io::Error> {
     crossterm::execute!(
         terminal.backend_mut(),
         crossterm::terminal::LeaveAlternateScreen,
+        crossterm::event::DisableMouseCapture
     )?;
     terminal.show_cursor()?;
 

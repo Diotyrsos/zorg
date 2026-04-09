@@ -1,5 +1,6 @@
 pub mod connection;
 pub mod schema;
+pub mod history;
 
 use diesel::prelude::*;
 use dotenvy::dotenv;
