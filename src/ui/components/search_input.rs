@@ -18,7 +18,7 @@ pub fn render_search_input(f: &mut Frame, app: &App, area: Rect, dimmed: bool, s
     
     // Simulate cursor block
     let display_input = if !dimmed && app.focus == crate::app::AppFocus::Search {
-        format!("{}█", app.input)
+        format!("{}_", app.input)
     } else {
         app.input.clone()
     };

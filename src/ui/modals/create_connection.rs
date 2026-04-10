@@ -130,7 +130,7 @@ impl CreateConnectionModal {
             Style::default().fg(Color::White)
         };
 
-        let button = Paragraph::new("Submit (Enter)")
+        let button = Paragraph::new("[ Submit ]")
             .alignment(ratatui::layout::Alignment::Center)
             .style(button_style);
 

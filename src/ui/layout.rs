@@ -1,7 +1,7 @@
 use crate::app::App;
 use crate::ui::components::{
     config_menu::render_config_menu, history::render_history, search_input::render_search_input,
-    search_results::render_search_results,
+    connection_list::render_search_results,
 };
 use ratatui::{
     layout::{Constraint, Direction, Layout},
@@ -31,7 +31,7 @@ pub fn draw(f: &mut Frame, app: &App) {
 
     let left_chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([Constraint::Percentage(10), Constraint::Percentage(90)])
+        .constraints([Constraint::Percentage(5), Constraint::Percentage(95)])
         .split(chunks[0]);
 
     let right_chunks = Layout::default()

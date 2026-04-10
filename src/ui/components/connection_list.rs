@@ -7,7 +7,7 @@ use crate::app::App;
 use crate::ui::utils::default_block_builder;
 
 pub fn render_search_results(f: &mut Frame, app: &App, area: Rect, dimmed: bool) {
-    let block = default_block_builder("Connections / Search Results", dimmed);
+    let block = default_block_builder("Connections", dimmed);
 
     let items: Vec<ListItem> = app
         .connections
@@ -16,12 +16,11 @@ pub fn render_search_results(f: &mut Frame, app: &App, area: Rect, dimmed: bool)
         .map(|(i, c)| {
             let fav_icon = if c.is_favorite { "★ " } else { "  " };
             let text = format!(
-                "{}{} ({}@{}) - Port: {}",
+                "{}{} ({}@{})",
                 fav_icon,
                 c.name,
                 c.username,
-                c.hostname,
-                c.port.unwrap_or(22)
+                c.hostname
             );
             
             if i == app.selected_connection_index {
