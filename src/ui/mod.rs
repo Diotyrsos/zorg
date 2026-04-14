@@ -9,5 +9,6 @@ use ratatui::Frame;
 pub fn draw(f: &mut Frame, app: &App) {
     layout::draw(f, app);
     app.create_connection_modal.render(f, f.area());
+    app.delete_connection_modal.render(f, f.area());
     app.keys_modal.render(f, f.area());
 }

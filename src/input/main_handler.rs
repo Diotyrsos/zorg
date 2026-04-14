@@ -38,13 +38,22 @@ pub fn handle_main_input(app: &mut App, key: KeyEvent) -> bool {
                 return true; // Request exit
             } else if key.modifiers.contains(KeyModifiers::CONTROL) && key_pressed == 'n' {
                 app.create_connection_modal.is_open = true;
+            } else if key.modifiers.contains(KeyModifiers::CONTROL) && key_pressed == 'd' {
+                if app.focus == AppFocus::List && app.selected_connection_index < app.connections.len() {
+                    let conn = &app.connections[app.selected_connection_index];
+                    if let Some(id) = conn.id {
+                        app.delete_connection_modal.open(id, conn.name.clone());
+                    }
+                }
             } else if key.modifiers.contains(KeyModifiers::CONTROL) && key_pressed == 'e' {
                 if app.focus == AppFocus::List && app.selected_connection_index < app.connections.len() {
                     let conn = app.connections[app.selected_connection_index].clone();
                     app.create_connection_modal.load_connection(&conn);
                 }
-            } else if key.modifiers.contains(KeyModifiers::CONTROL) && key_pressed == 'k' {
-                app.keys_modal.open();
+
+            // TODO: Add functionalty for password protected keys + rework ui
+            // } else if key.modifiers.contains(KeyModifiers::CONTROL) && key_pressed == 'k' {
+            //     app.keys_modal.open();
             } else if app.focus == AppFocus::List {
                 if key_pressed == 'f' {
                     if app.selected_connection_index < app.connections.len() {

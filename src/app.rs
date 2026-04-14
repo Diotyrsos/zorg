@@ -1,6 +1,7 @@
 use crate::db::connection::{Connection, NewConnection};
 use crate::db::history::History;
 use crate::ui::modals::create_connection::CreateConnectionModal;
+use crate::ui::modals::delete_connection::DeleteConnectionModal;
 use diesel::SqliteConnection;
 
 #[derive(PartialEq)]
@@ -13,6 +14,7 @@ pub struct App {
     pub input: String,
     pub messages: Vec<String>,
     pub create_connection_modal: CreateConnectionModal,
+    pub delete_connection_modal: DeleteConnectionModal,
     pub keys_modal: crate::ui::modals::keys::KeysModal,
     pub db: SqliteConnection,
     pub connections: Vec<Connection>,
@@ -31,6 +33,7 @@ impl App {
             input: String::new(),
             messages: Vec::new(),
             create_connection_modal: CreateConnectionModal::default(),
+            delete_connection_modal: DeleteConnectionModal::default(),
             keys_modal: crate::ui::modals::keys::KeysModal::default(),
             db,
             connections,
@@ -122,5 +125,25 @@ impl App {
     pub fn close_modal(&mut self) {
         self.create_connection_modal.is_open = false;
         self.create_connection_modal.reset();
+    }
+
+    pub fn delete_connection(&mut self) {
+        if let Some(id) = self.delete_connection_modal.connection_id {
+            match crate::db::connection::Connection::delete(&mut self.db, id) {
+                Ok(_) => {
+                    self.messages.push(format!("Deleted connection: {}", self.delete_connection_modal.connection_name));
+                    self.refresh_connections();
+                    if self.selected_connection_index >= self.connections.len() && !self.connections.is_empty() {
+                        self.selected_connection_index = self.connections.len() - 1;
+                    } else if self.connections.is_empty() {
+                        self.selected_connection_index = 0;
+                    }
+                }
+                Err(e) => {
+                    self.messages.push(format!("Error deleting connection: {}", e));
+                }
+            }
+        }
+        self.delete_connection_modal.close();
     }
 }

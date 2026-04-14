@@ -15,7 +15,9 @@ pub fn execute_ssh_connection(
     crossterm::terminal::disable_raw_mode()?;
     crossterm::execute!(
         terminal.backend_mut(),
-        crossterm::terminal::LeaveAlternateScreen
+        crossterm::terminal::LeaveAlternateScreen,
+        crossterm::event::DisableMouseCapture,
+        crossterm::cursor::Show
     )?;
 
     // Record start time
@@ -36,30 +38,35 @@ pub fn execute_ssh_connection(
     cmd.arg(user_host);
 
     // 3. Execute and wait - the child process inherits stdin/out/err
-    let status = cmd.status()?;
+    let status_result = cmd.status();
 
-    // 4. Record history
-    let end_time = Utc::now().timestamp() as i32;
-    let exit_code = if status.success() {
-        "0".to_string()
-    } else {
-        match status.code() {
-            Some(code) => code.to_string(),
-            None => "unknown".to_string(),
+    if let Ok(status) = &status_result {
+        // 4. Record history
+        let end_time = Utc::now().timestamp() as i32;
+        let exit_code = if status.success() {
+            "0".to_string()
+        } else {
+            match status.code() {
+                Some(code) => code.to_string(),
+                None => "unknown".to_string(),
+            }
+        };
+
+        if let Some(id) = conn.id {
+            let _ = History::create(db, id, start_time, end_time, exit_code);
         }
-    };
-
-    if let Some(id) = conn.id {
-        let _ = History::create(db, id, start_time, end_time, exit_code);
     }
 
-    // 5. Restore terminal
-    crossterm::terminal::enable_raw_mode()?;
-    crossterm::execute!(
+    // 5. Restore terminal (must be done regardless of SSH error)
+    let _ = crossterm::terminal::enable_raw_mode();
+    let _ = crossterm::execute!(
         terminal.backend_mut(),
-        crossterm::terminal::EnterAlternateScreen
-    )?;
-    terminal.clear()?;
+        crossterm::terminal::EnterAlternateScreen,
+        crossterm::event::EnableMouseCapture,
+        crossterm::cursor::Hide
+    );
+    let _ = terminal.clear();
 
-    Ok(())
+    // Return error from status if there was one
+    status_result.map(|_| ())
 }

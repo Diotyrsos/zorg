@@ -84,8 +84,7 @@ impl CreateConnectionModal {
             .direction(Direction::Vertical)
             .constraints([
                 Constraint::Length(3), // Name
-                Constraint::Length(3), // Username
-                Constraint::Length(3), // Hostname
+                Constraint::Length(3), // Username / Hostname
                 Constraint::Length(3), // Port
                 Constraint::Length(3), // Identity File
                 Constraint::Length(3), // Note
@@ -93,16 +92,34 @@ impl CreateConnectionModal {
             ])
             .split(inner_area);
 
-        let fields = vec![
-            ("Name", &self.name),
-            ("Username", &self.username),
-            ("Hostname", &self.hostname),
-            ("Port", &self.port),
-            ("Identity File", &self.identity_file),
-            ("Note", &self.note),
+        let user_host_chunks = Layout::default()
+            .direction(Direction::Horizontal)
+            .constraints([
+                Constraint::Fill(1),
+                Constraint::Length(3),
+                Constraint::Fill(1),
+            ])
+            .split(chunks[1]);
+
+        let rects = [
+            chunks[0],
+            user_host_chunks[0],
+            user_host_chunks[2],
+            chunks[2],
+            chunks[3],
+            chunks[4],
         ];
 
-        for (i, (label, value)) in fields.iter().enumerate() {
+        let fields = vec![
+            ("Name", &self.name, rects[0]),
+            ("Username", &self.username, rects[1]),
+            ("Hostname", &self.hostname, rects[2]),
+            ("Port", &self.port, rects[3]),
+            ("Identity File", &self.identity_file, rects[4]),
+            ("Note", &self.note, rects[5]),
+        ];
+
+        for (i, (label, value, rect)) in fields.iter().enumerate() {
             let style = if self.active_field == i {
                 Style::default().fg(Color::Yellow)
             } else {
@@ -115,14 +132,19 @@ impl CreateConnectionModal {
                 .border_style(style);
 
             let render_val = if self.active_field == i {
-                format!("{}█", value)
+                format!("{}_", value)
             } else {
                 value.to_string()
             };
 
             let paragraph = Paragraph::new(render_val).block(block);
-            f.render_widget(paragraph, chunks[i]);
+            f.render_widget(paragraph, *rect);
         }
+
+        let at_paragraph = Paragraph::new("\n@")
+            .alignment(ratatui::layout::Alignment::Center)
+            .style(Style::default());
+        f.render_widget(at_paragraph, user_host_chunks[1]);
 
         let button_style = if self.active_field == 6 {
             Style::default().fg(Color::Yellow)
@@ -134,6 +156,6 @@ impl CreateConnectionModal {
             .alignment(ratatui::layout::Alignment::Center)
             .style(button_style);
 
-        f.render_widget(button, chunks[6]);
+        f.render_widget(button, chunks[5]);
     }
 }

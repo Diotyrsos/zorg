@@ -12,7 +12,7 @@ use ratatui::{
 use crate::ui::utils::center_rect;
 
 pub fn draw(f: &mut Frame, app: &App) {
-    let dimmed = app.create_connection_modal.is_open || app.show_help_modal;
+    let dimmed = app.create_connection_modal.is_open || app.delete_connection_modal.is_open || app.show_help_modal;
     let style = if dimmed {
         Style::default().fg(Color::Indexed(244))
     } else {
@@ -41,10 +41,10 @@ pub fn draw(f: &mut Frame, app: &App) {
 
     render_search_input(f, app, left_chunks[0], dimmed, style);
     render_search_results(f, app, left_chunks[1], dimmed);
-    render_history(f, app, right_chunks[0], dimmed, style);
+    render_history(f, right_chunks[0], dimmed);
     render_config_menu(f, right_chunks[1], dimmed);
 
-    let shortcuts = " [Enter] Connect  |  [f] Toggle Favorite  |  [Ctrl+n] New  |  [Ctrl+e] Edit  |  [Ctrl+k] Keys  |  [Up/Down] Navigate  |  [?] Full Help";
+    let shortcuts = " [Enter] Connect  |  [f] Toggle Favorite  |  [Ctrl+n] New  |  [Ctrl+e] Edit  |  [Ctrl+d] Delete  |  [Ctrl+k] Keys  |  [Up/Down] Navigate  |  [?] Full Help";
     f.render_widget(
         Paragraph::new(shortcuts).style(Style::default().fg(Color::Yellow)),
         main_chunks[1],
@@ -58,6 +58,7 @@ pub fn draw(f: &mut Frame, app: &App) {
             [f]       Toggle favorite status\n\
             [Ctrl+n]  Create new connection\n\
             [Ctrl+e]  Edit selected connection\n\
+            [Ctrl+d]  Delete selected connection\n\
             [Ctrl+k]  Manage SSH Keys\n\
             [Up/Down] Navigate list\n\
             [?]       Toggle this help modal\n\

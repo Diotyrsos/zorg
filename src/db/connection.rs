@@ -136,4 +136,9 @@ impl Connection {
             .filter(connections::id.eq(conn_id))
             .first(db_connection)
     }
+
+    pub fn delete(db_connection: &mut SqliteConnection, conn_id: i32) -> QueryResult<usize> {
+        diesel::delete(connections::table.filter(connections::id.eq(conn_id)))
+            .execute(db_connection)
+    }
 }

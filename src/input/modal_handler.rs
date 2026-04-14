@@ -18,6 +18,24 @@ pub fn handle_modal_input(app: &mut App, key: KeyEvent) -> bool {
         return false;
     }
 
+    if app.delete_connection_modal.is_open {
+        match key.code {
+            KeyCode::Esc => app.delete_connection_modal.close(),
+            KeyCode::Left | KeyCode::Right | KeyCode::Tab | KeyCode::BackTab => {
+                app.delete_connection_modal.selected_yes = !app.delete_connection_modal.selected_yes;
+            }
+            KeyCode::Enter => {
+                if app.delete_connection_modal.selected_yes {
+                    app.delete_connection();
+                } else {
+                    app.delete_connection_modal.close();
+                }
+            }
+            _ => {}
+        }
+        return false;
+    }
+
     match key.code {
         KeyCode::Esc => {
             app.close_modal();
