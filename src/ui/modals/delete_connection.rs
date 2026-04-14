@@ -45,9 +45,10 @@ impl DeleteConnectionModal {
             return;
         }
 
-        let popup_area = center_rect(40, 25, area);
-        f.render_widget(Clear, popup_area);
+        let base_area = center_rect(44, 29, area);
+        f.render_widget(Clear, base_area);
 
+        let popup_area = base_area.inner(ratatui::layout::Margin { horizontal: 2, vertical: 1 });
         let block = default_block_builder("Confirm Deletion", false);
         f.render_widget(block.clone(), popup_area);
 
@@ -57,7 +58,7 @@ impl DeleteConnectionModal {
             .direction(Direction::Vertical)
             .constraints([
                 Constraint::Min(2),
-                Constraint::Length(3), // Buttons
+                Constraint::Length(3), // buttons
             ])
             .split(inner_area);
 

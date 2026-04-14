@@ -20,7 +20,7 @@ pub fn establish_connection() -> SqliteConnection {
 
     let database_url = env::var("DATABASE_URL").unwrap_or_else(|_| default_db);
     
-    // Ensure the database parent directory exists
+    // ensure database parent directory exists
     if let Some(parent) = Path::new(&database_url).parent() {
         if !parent.exists() && parent != Path::new("") {
             fs::create_dir_all(parent).unwrap_or_else(|e| {

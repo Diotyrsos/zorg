@@ -45,7 +45,7 @@ fn main() -> Result<(), io::Error> {
             _ => {}
         }
         
-        // Check if there is a pending SSH connection to run outside the TUI loop
+        // check if there is a pending SSH connection to run outside the TUI loop
         if let Some(conn) = app.pending_ssh_connection.take() {
             let mut db_conn = app.db_conn();
             if let Err(e) = ssh::runner::execute_ssh_connection(&conn, &mut db_conn, &mut terminal) {

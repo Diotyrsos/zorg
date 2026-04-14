@@ -20,7 +20,7 @@ pub fn handle_key_event(app: &mut App, key: KeyEvent) -> bool {
 
 pub fn handle_mouse_event(app: &mut App, mouse: MouseEvent) -> bool {
     if let crossterm::event::MouseEventKind::Down(crossterm::event::MouseButton::Left) = mouse.kind {
-        // Very basic heuristic: if clicking in top top few rows, focus search, otherwise list
+        // TODO: optimize mouse support, currently very basic heuristic: if clicking in top top few rows, focus search, otherwise list
         if mouse.row < 4 {
             app.focus = crate::app::AppFocus::Search;
         } else {

@@ -67,8 +67,10 @@ impl CreateConnectionModal {
             return;
         }
 
-        let popup_area = center_rect(60, 60, area);
-        f.render_widget(Clear, popup_area);
+        let base_area = center_rect(64, 64, area);
+        f.render_widget(Clear, base_area);
+
+        let popup_area = base_area.inner(ratatui::layout::Margin { horizontal: 2, vertical: 1 });
 
         let title = if self.editing_connection_id.is_some() {
             "Edit Connection"
@@ -83,12 +85,12 @@ impl CreateConnectionModal {
         let chunks = Layout::default()
             .direction(Direction::Vertical)
             .constraints([
-                Constraint::Length(3), // Name
-                Constraint::Length(3), // Username / Hostname
-                Constraint::Length(3), // Port
-                Constraint::Length(3), // Identity File
-                Constraint::Length(3), // Note
-                Constraint::Min(1),    // Button
+                Constraint::Length(3), // name
+                Constraint::Length(3), // username / hostname
+                Constraint::Length(3), // port
+                Constraint::Length(3), // identity File
+                Constraint::Length(3), // note
+                Constraint::Min(1),    // button
             ])
             .split(inner_area);
 

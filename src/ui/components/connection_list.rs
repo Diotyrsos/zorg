@@ -30,7 +30,7 @@ pub fn render_search_results(f: &mut Frame, app: &App, area: Rect, dimmed: bool,
                 Style::default().fg(Color::White)
             };
             
-            // use cyan to highlight matched characters
+            // highlight matched characters
             let highlight_style = base_style.patch(Style::default().fg(Color::Cyan).add_modifier(ratatui::style::Modifier::BOLD));
             
             let mut spans = vec![Span::styled(fav_icon, base_style)];

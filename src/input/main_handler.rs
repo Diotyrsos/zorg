@@ -38,7 +38,7 @@ pub fn handle_main_input(app: &mut App, key: KeyEvent) -> bool {
         }
         KeyCode::Char(key_pressed) => {
             if key.modifiers.contains(KeyModifiers::CONTROL) && key_pressed == 'c' {
-                return true; // Request exit
+                return true; // request exit
             } else if key.modifiers.contains(KeyModifiers::CONTROL) && key_pressed == 'n' {
                 app.create_connection_modal.is_open = true;
             } else if key.modifiers.contains(KeyModifiers::CONTROL) && key_pressed == 'd' {

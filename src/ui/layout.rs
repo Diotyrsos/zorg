@@ -51,8 +51,9 @@ pub fn draw(f: &mut Frame, app: &App) {
     );
 
     if app.show_help_modal {
-        let help_area = center_rect(40, 40, f.area());
-        f.render_widget(Clear, help_area);
+        let base_area = center_rect(44, 44, f.area());
+        f.render_widget(Clear, base_area);
+        let help_area = base_area.inner(ratatui::layout::Margin { horizontal: 2, vertical: 1 });
         let help_text = "== Zorg Shortcuts ==\n\n\
             [Enter]   Connect selected\n\
             [f]       Toggle favorite status\n\

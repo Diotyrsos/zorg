@@ -38,7 +38,7 @@ impl KeysModal {
         } else if self.list_state.borrow().selected().is_none() {
             self.list_state.borrow_mut().select(Some(0));
         } else {
-            // Keep bounds
+            // keep bounds
             let max = self.keys.len().saturating_sub(1);
             let current = self.list_state.borrow().selected().unwrap();
             if current > max {
@@ -119,9 +119,10 @@ impl KeysModal {
             return;
         }
 
-        let popup_area = center_rect(60, 60, area);
-        f.render_widget(Clear, popup_area);
+        let base_area = center_rect(64, 64, area);
+        f.render_widget(Clear, base_area);
 
+        let popup_area = base_area.inner(ratatui::layout::Margin { horizontal: 2, vertical: 1 });
         let block = default_block_builder("SSH Keys Management", false);
         let inner_area = block.inner(popup_area);
         f.render_widget(block, popup_area);
@@ -129,10 +130,10 @@ impl KeysModal {
         let chunks = Layout::default()
             .direction(Direction::Vertical)
             .constraints([
-                Constraint::Length(1), // Status
-                Constraint::Min(5),    // List
-                Constraint::Length(1), // Message
-                Constraint::Length(1), // Help
+                Constraint::Length(1), // status
+                Constraint::Min(5),    // list
+                Constraint::Length(1), // message
+                Constraint::Length(1), // help
             ])
             .split(inner_area);
 

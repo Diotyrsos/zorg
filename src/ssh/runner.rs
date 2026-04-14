@@ -11,7 +11,7 @@ pub fn execute_ssh_connection(
     db: &mut diesel::SqliteConnection,
     terminal: &mut Terminal<CrosstermBackend<Stdout>>,
 ) -> Result<(), std::io::Error> {
-    // 1. Temporarily yield terminal
+    // 1. temporarily yield terminal
     crossterm::terminal::disable_raw_mode()?;
     crossterm::execute!(
         terminal.backend_mut(),
@@ -20,10 +20,10 @@ pub fn execute_ssh_connection(
         crossterm::cursor::Show
     )?;
 
-    // Record start time
+    // record start time
     let start_time = Utc::now().timestamp() as i32;
 
-    // 2. Build ssh command
+    // 2. build ssh command
     let mut cmd = Command::new("ssh");
 
     if let Some(port) = conn.port {
@@ -37,11 +37,11 @@ pub fn execute_ssh_connection(
     let user_host = format!("{}@{}", conn.username, conn.hostname);
     cmd.arg(user_host);
 
-    // 3. Execute and wait - the child process inherits stdin/out/err
+    // 3. execute and wait - the child process inherits stdin/out/err
     let status_result = cmd.status();
 
     if let Ok(status) = &status_result {
-        // 4. Record history
+        // 4. record history
         let end_time = Utc::now().timestamp() as i32;
         let exit_code = if status.success() {
             "0".to_string()
@@ -57,7 +57,7 @@ pub fn execute_ssh_connection(
         }
     }
 
-    // 5. Restore terminal (must be done regardless of SSH error)
+    // 5. restore terminal
     let _ = crossterm::terminal::enable_raw_mode();
     let _ = crossterm::execute!(
         terminal.backend_mut(),
@@ -67,6 +67,6 @@ pub fn execute_ssh_connection(
     );
     let _ = terminal.clear();
 
-    // Return error from status if there was one
+    // return error from status if there was one
     status_result.map(|_| ())
 }

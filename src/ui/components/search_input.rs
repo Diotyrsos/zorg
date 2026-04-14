@@ -16,7 +16,7 @@ pub fn render_search_input(f: &mut Frame, app: &App, area: Rect, dimmed: bool, s
 
     let block = default_block_builder("Search Input", dimmed).border_style(focus_style);
     
-    // Simulate cursor block
+    // simulate underline cursor
     let display_input = if !dimmed && app.focus == crate::app::AppFocus::Search {
         format!("{}_", app.input)
     } else {
