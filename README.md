@@ -57,8 +57,8 @@ Zorg uses a self-contained SQLite database that is automatically initialized on 
 
 Feedback, bug reports, and pull requests are highly appreciated! 
 
-> [!NOTE]
-> Check out the roadmap!
+> [!IMPORTANT]
+> Check out the [roadmap](ROADMAP.md)!
 
 - Did you find a bug? Open an issue.
 - Have a feature request? Let's discuss it!
