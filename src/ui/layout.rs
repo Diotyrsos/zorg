@@ -31,7 +31,7 @@ pub fn draw(f: &mut Frame, app: &App) {
 
     let left_chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([Constraint::Percentage(5), Constraint::Percentage(95)])
+        .constraints([Constraint::Length(3), Constraint::Min(0)])
         .split(chunks[0]);
 
     let right_chunks = Layout::default()
